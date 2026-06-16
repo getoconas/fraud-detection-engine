@@ -1,12 +1,10 @@
 package com.mago.infrastructure.configuration;
 
 import com.mago.application.port.FraudAlertPublisher;
-import com.mago.application.port.TransactionRepository;
 import com.mago.application.service.CustomerHistoryService;
 import com.mago.application.service.ProcessTransactionUseCase;
 import com.mago.domain.service.*;
 import com.mago.infrastructure.adapter.output.ConsoleFraudAlertPublisher;
-import com.mago.infrastructure.adapter.output.InMemoryTransactionRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,16 +15,14 @@ import java.util.List;
  * <p>
  * Define los beans manualmente para mantener el dominio
  * libre de anotaciones de Spring.
+ * <p>
+ * TransactionRepository ya no se define aquí: el adaptador JPA
+ * se registra automáticamente con @Component.
  */
 @Configuration
 public class DomainConfiguration {
 
     // --- Puertos (adaptadores de salida) ---
-
-    @Bean
-    TransactionRepository transactionRepository() {
-        return new InMemoryTransactionRepository();
-    }
 
     @Bean
     FraudAlertPublisher fraudAlertPublisher() {
@@ -55,7 +51,7 @@ public class DomainConfiguration {
 
     @Bean
     ProcessTransactionUseCase processTransactionUseCase(
-            TransactionRepository transactionRepository,
+            com.mago.application.port.TransactionRepository transactionRepository,
             FraudAlertPublisher fraudAlertPublisher,
             FraudDetectionEngine fraudDetectionEngine,
             CustomerHistoryService customerHistoryService) {
