@@ -46,3 +46,6 @@ docker-compose.override.yml
 
 # Logs
 *.log
+
+# Credenciales
+src/main/resources/application.properties
