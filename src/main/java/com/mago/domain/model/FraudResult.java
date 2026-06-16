@@ -1,5 +1,9 @@
 package com.mago.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.Instant;
 import java.util.Objects;
 
@@ -11,6 +15,7 @@ import java.util.Objects;
  *
  * @author mago
  */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public final class FraudResult {
     private final String ruleName;
     private final String reason;
@@ -27,15 +32,11 @@ public final class FraudResult {
         this.detectedAt = detectedAt;
     }
 
-    /**
-     * Crea un resultado de fraude para una transacción.
-     *
-     * @param ruleName    nombre de la regla que detectó el fraude
-     * @param reason      descripción de por qué se considera fraude
-     * @param transaction la transacción sospechosa
-     * @return un nuevo FraudResult
-     */
-    public static FraudResult of(String ruleName, String reason, Transaction transaction) {
+    @JsonCreator
+    public static FraudResult of(
+            @JsonProperty("ruleName") String ruleName,
+            @JsonProperty("reason") String reason,
+            @JsonProperty("transaction") Transaction transaction) {
         if (ruleName == null || ruleName.isBlank()) {
             throw new IllegalArgumentException("Rule name cannot be null or blank");
         }

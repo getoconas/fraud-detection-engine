@@ -5,8 +5,11 @@ import com.mago.application.service.CustomerHistoryService;
 import com.mago.application.service.ProcessTransactionUseCase;
 import com.mago.domain.service.*;
 import com.mago.infrastructure.adapter.output.ConsoleFraudAlertPublisher;
+import com.mago.infrastructure.adapter.output.KafkaFraudAlertPublisher;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.List;
 
@@ -22,11 +25,14 @@ import java.util.List;
 @Configuration
 public class DomainConfiguration {
 
+    @Value("${app.kafka.topic.fraud-alerts}")
+    private String fraudAlertsTopic;
+
     // --- Puertos (adaptadores de salida) ---
 
     @Bean
-    FraudAlertPublisher fraudAlertPublisher() {
-        return new ConsoleFraudAlertPublisher();
+    FraudAlertPublisher fraudAlertPublisher(KafkaTemplate<String, Object> kafkaTemplate) {
+        return new KafkaFraudAlertPublisher(kafkaTemplate, fraudAlertsTopic);
     }
 
     // --- Servicios de dominio ---
